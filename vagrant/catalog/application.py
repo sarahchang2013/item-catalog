@@ -92,17 +92,16 @@ def editItem(category_name, item_title):
 		return render_template("editItem.html")
 
 
-@app.route('/catalog/<item_title>/delete', methods=['GET','POST'])
-def deleteItem(item_title):
+@app.route('/catalog/<category_name>/<item_title>/delete', methods=['GET','POST'])
+def deleteItem(category_name, item_title):
 	if request.method == 'POST':
-		deletedItem = session.query(Item).filter(Item.title == item_title).one()
-		#Retrieve form data
-		#code here
+		deletedItem = session.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 		session.delete(deletedItem)
 		session.commit()
-		return render_template("index.html")
+		flash('Item deleted!')
+		return redirect('/index')
 	else:
-		return render_template("deleteItem.html", item_title=item_title)
+		return render_template("deleteItem.html", category_name=category_name, item_title=item_title)
 
 
 if __name__ == '__main__':
