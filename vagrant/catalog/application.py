@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask import request, redirect, jsonify, url_for, flash
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
 
@@ -37,8 +37,8 @@ def categoryDetails(name):
 
 @app.route('/catalog/<category_name>/<item_title>')
 def itemDescription(category_name, item_title):
-	item = session.query(Item).filter(Item.title == item_title).one()
-	return render_template("itemDescription.html", item=item)
+	item = session.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
+	return render_template("itemDescription.html", category_name=category_name, item=item)
 
 
 @app.route('/catalog.json')
@@ -54,7 +54,7 @@ def addItem():
 		title = request.form['title']
 		description = request.form['description']
 		category_id = request.form['category']
-		existing_items = session.query(Item).filter((Item.title == title) and (Item.category_id == category.id)).all()
+		existing_items = session.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
 		if len(existing_items):
 			flash('Item already exists!')
 			return redirect('/index')
