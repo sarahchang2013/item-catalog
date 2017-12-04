@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for
+from flask import Flask, render_template
+from flask import request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
@@ -17,7 +18,9 @@ session = DBSession()
 def homePage():
 	categories = session.query(Category).all()
 	latestItems = session.query(Item).order_by(Item.id.desc()).limit(10)
-	return render_template("index.html", categories=categories, latestItems=latestItems)
+	return render_template("index.html", 
+							categories=categories, 
+							latestItems=latestItems)
 
 
 @app.route('/catalog/<name>/items')
@@ -26,7 +29,10 @@ def categoryDetails(name):
 	category = session.query(Category).filter(Category.name == name).one()
 	items = category.items
 	count = len(items)
-	return render_template("categoryDetails.html", categories=categories, category_name=name, items=items, count=count)
+	return render_template("categoryDetails.html", 
+							categories=categories, 
+							category_name=name, 
+							items=items, count=count)
 
 
 @app.route('/catalog/<category_name>/<item_title>')
@@ -45,11 +51,20 @@ def catalogJSON():
 def addItem():
 	if request.method == 'POST':
 		#Retrieve form data
-		#code here
-		newItem = Item(title=title, description=description, category_id=category_id, user_id=user_id)
-		session.add(newItem)
-		session.commit()
-		return render_template("index.html")
+		title = request.form['title']
+		description = request.form['description']
+		category_id = request.form['category']
+		existing_items = session.query(Item).filter((Item.title == title) and (Item.category_id == category.id)).all()
+		if len(existing_items):
+			flash('Item already exists!')
+			return redirect('/index')
+		else:
+			newItem = Item(title=title, 
+							description=description, 
+							category_id=category_id)
+			session.add(newItem)
+			session.commit()
+			return redirect('/index')
 	else:
 		return render_template("addItem.html")
 
@@ -59,7 +74,9 @@ def editItem(item_title):
 	if request.method == 'POST':
 		editedItem = session.query(Item).filter(Item.title == item_title).one()
 		#Retrieve form data
-		#code here
+		title = request.form['title']
+		description = request.form['description']
+		category_id = request.form['category']
 		editedItem.title = title
 		editedItem.description = description
 		editedItem.category_id = category_id
@@ -84,4 +101,5 @@ def deleteItem(item_title):
 
 if __name__ == '__main__':
 	app.debug = True
+	app.secret_key = 'super_secret_key'
 	app.run(host='0.0.0.0', port=8000)
