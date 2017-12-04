@@ -20,7 +20,7 @@ class Category(Base):
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String(250), nullable=False)
-	items = relationship("Item")
+	items = relationship("Item", back_populates="category")
 
 	#serialize function
 	@property
@@ -46,8 +46,8 @@ class Item(Base):
 	title = Column(String(250), nullable=False)
 	description = Column(String(800), nullable=False)
 	category_id = Column(Integer, ForeignKey('category.id'))
-	user_id = Column(Integer, ForeignKey('user.id'))
-	
+	category = relationship("Category", back_populates="items")
+	user_id = Column(Integer, ForeignKey('user.id'))	
 
 	#serialize function
 	@property

@@ -11,6 +11,23 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+@app.route('/')
+@app.route('/index')
+def homePage():
+	categories = session.query(Category).all()
+	latestItems = session.query(Item).order_by(Item.id.desc()).limit(10)
+	return render_template("index.html", categories=categories, latestItems=latestItems)
+
+@app.route('/catalog/<name>/items')
+def categoryDetails(name):
+	category = session.query(Category).filter(Category.name == name).one()
+	return render_template("categoryDetails.html", category_name=name, items=category.items)
+
+@app.route('/catalog/<category_name>/<item_title>')
+def itemDescription(category_name, item_title):
+	item = session.query(Item).filter(Item.title == item_title).one()
+	return render_template("itemDescription.html", item=item)
+
 
 @app.route('/catalog.json')
 def catalogJSON():

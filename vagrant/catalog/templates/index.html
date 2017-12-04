@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Catalog App</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	</head>
+
+	<body>
+		<div class = "categories">
+			<h1>Categories</h1><br>
+
+			{% for category in categories %}
+
+			<a href = "{{url_for('categoryDetails', name = category.name)}}">{{category.name}}</a><br>
+
+			{% endfor %}
+		</div>
+
+		<div class = "latestItems">
+			<h1>Latest Items</h1><br>
+			{% for item in latestItems %}
+
+			<a href = "{{url_for('itemDescription', category_name = item.category.name, item_title = item.title)}}">{{item.title}}({{item.category.name}})</a><br>
+
+			{% endfor %}
+		</div>
+	</body>
+</html>
