@@ -4,8 +4,18 @@
 	</head>
 
 	<body>
+		<div class = "categories">
+			<h1>Categories</h1><br>
+
+			{% for category in categories %}
+
+			<a href = "{{url_for('categoryDetails', name = category.name)}}">{{category.name}}</a><br>
+
+			{% endfor %}
+		</div>
+		
 		<div class = "category-items">
-			<h1>{{category_name}} Items</h1>
+			<h1>{{category_name}} Items ({{count}} items)</h1>
 			{% for item in items %}
 			<a href="{{url_for('itemDescription', category_name = category_name, item_title = item.title)}}">{{item.title}}</a><br>
 			{% endfor %}

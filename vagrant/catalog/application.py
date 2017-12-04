@@ -20,8 +20,11 @@ def homePage():
 
 @app.route('/catalog/<name>/items')
 def categoryDetails(name):
+	categories = session.query(Category).all()
 	category = session.query(Category).filter(Category.name == name).one()
-	return render_template("categoryDetails.html", category_name=name, items=category.items)
+	items = category.items
+	count = len(items)
+	return render_template("categoryDetails.html", categories=categories, category_name=name, items=items, count=count)
 
 @app.route('/catalog/<category_name>/<item_title>')
 def itemDescription(category_name, item_title):
@@ -37,4 +40,4 @@ def catalogJSON():
 
 if __name__ == '__main__':
 	app.debug = True
-	app.run(host='0.0.0.0', port=5000)
+	app.run(host='0.0.0.0', port=8000)
