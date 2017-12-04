@@ -69,21 +69,27 @@ def addItem():
 		return render_template("addItem.html")
 
 
-@app.route('/catalog/<item_title>/edit', methods=['GET','POST'])
-def editItem(item_title):
+@app.route('/catalog/<category_name>/<item_title>/edit', methods=['GET','POST'])
+def editItem(category_name, item_title):
 	if request.method == 'POST':
-		editedItem = session.query(Item).filter(Item.title == item_title).one()
 		#Retrieve form data
 		title = request.form['title']
 		description = request.form['description']
 		category_id = request.form['category']
-		editedItem.title = title
-		editedItem.description = description
-		editedItem.category_id = category_id
-		session.commit()
-		return render_template("itemDescription.html", item=item)
+		existing_items = session.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
+		if len(existing_items) >= 2:
+			flash('Item already exists, please pick a different title or category.')
+			return render_template("editItem.html", item_title=item_title)
+		else:
+			editedItem = session.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
+			editedItem.title = title
+			editedItem.description = description
+			editedItem.category_id = category_id
+			new_cat_name = editedItem.category.name
+			session.commit()
+			return render_template("itemDescription.html", category_name=new_cat_name, item=editedItem)
 	else:
-		return render_template("editItem.html", item_title=item_title)
+		return render_template("editItem.html")
 
 
 @app.route('/catalog/<item_title>/delete', methods=['GET','POST'])
