@@ -77,7 +77,7 @@ def editItem(category_name, item_title):
 		description = request.form['description']
 		category_id = request.form['category']
 		existing_items = session.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
-		if len(existing_items) >= 2:
+		if len(existing_items) >= 1:
 			flash('Item already exists, please pick a different title or category.')
 			return render_template("editItem.html", item_title=item_title)
 		else:
@@ -87,7 +87,7 @@ def editItem(category_name, item_title):
 			editedItem.category_id = category_id
 			new_cat_name = editedItem.category.name
 			session.commit()
-			return render_template("itemDescription.html", category_name=new_cat_name, item=editedItem)
+			return redirect('/catalog/{}/{}'.format(new_cat_name, editedItem.title))
 	else:
 		return render_template("editItem.html")
 
@@ -95,7 +95,7 @@ def editItem(category_name, item_title):
 @app.route('/catalog/<category_name>/<item_title>/delete', methods=['GET','POST'])
 def deleteItem(category_name, item_title):
 	if request.method == 'POST':
-		deletedItem = session.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
+		deletedItem = session.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).first()
 		session.delete(deletedItem)
 		session.commit()
 		flash('Item deleted!')
