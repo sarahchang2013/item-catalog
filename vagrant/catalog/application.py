@@ -3,7 +3,8 @@ from flask import request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item, User
-
+import random, string
+from flask import session as login_session
 
 app = Flask(__name__)
 
@@ -11,6 +12,13 @@ engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
+@app.route('/login')
+def login():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+	login_session['state'] = state
+	return render_template('login.html', STATE=state)
 
 
 @app.route('/')

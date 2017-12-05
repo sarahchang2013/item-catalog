@@ -1,10 +1,7 @@
-<html>
-	<head>
-		<title>{{category_name}} | {{item.title}}</title>
-	</head>
-
-	<body>
+{% extends "layout.html" %}
+{% block body %}
+	<div class="description">
 		<h1>{{category_name}} | {{item.title}}</h1><br>
 		<p>Description: {{item.description}}</p>
-	</body>
-</html>
+	</div>
+{% endblock %}
