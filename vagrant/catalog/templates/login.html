@@ -5,27 +5,37 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+	</script>
     <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
 
 
   </head>
 
   <body>
+  	<!--Continue to define start() in head tag-->
+  	<script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '251997723405-46at4eis5ac8v5k9nfva03ad22i1rujj.apps.googleusercontent.com',
+          // Scopes to request in addition to 'profile' and 'email'
+          scope: 'openid email'
+        });
+      });
+    }
+  	</script>
+  	<!--END start() for script in head tag-->
+
   	<!-- GOOGLE PLUS SIGN IN-->
-  	<div id="signinButton">
-  		<!-- Minimize initial authorization scope to reduce user confusion. Openid scope is preferred-->
-  		<!-- Request offline accesstype to connect to Google when user is offline, eg.make analytic reports-->
-  		<span class="g-signin"
-  			data-scope="openid email"
-  			data-clientid="251997723405-46at4eis5ac8v5k9nfva03ad22i1rujj.apps.googleusercontent.com"
-  			data-redirecturi="postmessage"
-  			data-accesstype="offline"
-  			data-cookiepolicy="single_host_origin"
-  			data-callback="signInCallback"
-  			data-approvalprompt="force">
-  		</span>
-  	</div>
+  	<button id="signinButton">Sign in with Google</button>
+  	<script>
+  		$('#signinButton').click(function() {
+    		// signInCallback defined in step 6.
+    		auth2.grantOfflineAccess().then(signInCallback);
+ 	 	});
+	</script>
+
 
   	<div id="result"></div>
 
@@ -38,6 +48,9 @@
             url: '/gconnect?state={{STATE}}',
             processData: false,
             data: authResult['code'],
+            headers: {
+            	'X-Requested-With': 'XMLHttpRequest'
+      		},
             contentType: 'application/octet-stream; charset=utf-8',
             success: function(result) {
               if (result) {
