@@ -8,9 +8,13 @@
 			<a href = "{{url_for('categoryDetails', name = category.name)}}">{{category.name}}</a><br>
 
 		{% endfor %}
+		<br><br>
 	</div>
 
 	<div class = "latestItems">
+		{% if session.logged_in %}
+		<a href="{{url_for('addItem')}}">Add Item</a>
+		{% endif %}
 		<h1>Latest Items</h1><br>
 		
 		{% for item in latestItems %}

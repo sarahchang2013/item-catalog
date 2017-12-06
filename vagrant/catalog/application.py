@@ -27,11 +27,6 @@ def login():
 	return render_template('login.html', STATE=state)
 
 
-@app.route('/logout')
-def logout():
-    return True
-
-
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -149,6 +144,34 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+
+@app.route('/logout')
+@app.route('/gdisconnect')
+def logout():
+	# Only disconnect a connected user.
+	access_token = session.get('access_token')
+	if access_token is None:
+		response = make_response(
+			json.dumps('Current user not connected.'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+	h = httplib2.Http()
+	result = h.request(url, 'GET')[0]
+	if result['status'] == '200':
+		del session['access_token']
+		del session['gplus_id']
+		del session['username']
+		del session['email']
+		del session['picture']
+		session.pop('logged_in', None)
+		flash('You are now logged out.')
+		return redirect('/index')
+	else:
+		response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+		response.headers['Content-Type'] = 'application/json'
+		return response
 
 
 @app.route('/')
