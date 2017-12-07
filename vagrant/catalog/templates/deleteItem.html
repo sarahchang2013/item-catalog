@@ -1,5 +1,7 @@
-
-<h2> Are you sure you want to delete {{item_title}} in {{category_name}}? </h2>
-<form action="#" method = 'post'>
-	<button type="submit" id="submit" type="submit">Delete</button>
-</form>
+{% extends "layout.html" %}
+{% block body %}
+	<h2> Are you sure you want to delete {{item_title}} in {{category_name}}? </h2>
+	<form action="#" method = 'post'>
+		<button type="submit" id="submit" type="submit">Delete</button>
+	</form>
+{% endblock %}

@@ -14,12 +14,14 @@ from flask import make_response
 
 app = Flask(__name__)
 
+#Prepare for database query
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 dbsession = DBSession()
 
 
+#Login page
 @app.route('/login')
 def login():
 	state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
@@ -27,6 +29,7 @@ def login():
 	return render_template('login.html', STATE=state)
 
 
+#Connect to Google account
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -122,8 +125,6 @@ def gconnect():
     return output
 
 # User Helper Functions
-
-
 def createUser(session):
     newUser = User(name=session['username'], email=session[
                    'email'], picture=session['picture'])
@@ -132,11 +133,9 @@ def createUser(session):
     user = dbsession.query(User).filter_by(email=session['email']).one()
     return user.id
 
-
 def getUserInfo(user_id):
     user = dbsession.query(User).filter_by(id=user_id).one()
     return user
-
 
 def getUserID(email):
     try:
@@ -146,6 +145,9 @@ def getUserID(email):
         return None
 
 
+#Disconnect from Google account. 
+#If new third party is added, seperate '/logout' to a new function,  
+#and render a new page for logout options.
 @app.route('/logout')
 @app.route('/gdisconnect')
 def logout():
@@ -174,6 +176,7 @@ def logout():
 		return response
 
 
+#Index page
 @app.route('/')
 @app.route('/index')
 def homePage():
@@ -184,6 +187,7 @@ def homePage():
 							latestItems=latestItems)
 
 
+#Show items in a category
 @app.route('/catalog/<name>/items')
 def categoryDetails(name):
 	categories = dbsession.query(Category).all()
@@ -196,30 +200,37 @@ def categoryDetails(name):
 							items=items, count=count)
 
 
+#Show description of an item in a category
 @app.route('/catalog/<category_name>/<item_title>')
 def itemDescription(category_name, item_title):
 	item = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 	return render_template("itemDescription.html", category_name=category_name, item=item)
 
 
+#JSON endpoint to show all items in each category
 @app.route('/catalog.json')
 def catalogJSON():
 	categories = dbsession.query(Category).all()
 	return jsonify(Category=[c.serialize for c in categories])
 
 
-@app.route('/catalog/add', methods=['GET','POST'])
+#Page for adding new items
+@app.route('/catalog/add', methods=['GET', 'POST'])
 def addItem():
+	if 'username' not in session:
+		return redirect('/login')
 	if request.method == 'POST':
 		#Retrieve form data
 		title = request.form['title']
 		description = request.form['description']
 		category_id = request.form['category']
+		#Check if an item with the same title and category already exists
 		existing_items = dbsession.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
 		if len(existing_items):
 			flash('Item already exists!')
 			return redirect('/index')
 		else:
+			#New item confirmed, add to database
 			newItem = Item(title=title, 
 							description=description, 
 							category_id=category_id)
@@ -230,18 +241,23 @@ def addItem():
 		return render_template("addItem.html")
 
 
+#Page for editting an item in a category
 @app.route('/catalog/<category_name>/<item_title>/edit', methods=['GET','POST'])
 def editItem(category_name, item_title):
+	if 'username' not in session:
+		return redirect('/login')
 	if request.method == 'POST':
 		#Retrieve form data
 		title = request.form['title']
 		description = request.form['description']
 		category_id = request.form['category']
+		#Check if an item with the same title and category already exists
 		existing_items = dbsession.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
 		if len(existing_items) >= 1:
 			flash('Item already exists, please pick a different title or category.')
-			return render_template("editItem.html", item_title=item_title)
+			return render_template("editItem.html", category_name=category_name, item_title=item_title)
 		else:
+			#No existing item with same title and category, update it
 			editedItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 			editedItem.title = title
 			editedItem.description = description
@@ -250,12 +266,17 @@ def editItem(category_name, item_title):
 			dbsession.commit()
 			return redirect('/catalog/{}/{}'.format(new_cat_name, editedItem.title))
 	else:
-		return render_template("editItem.html")
+		return render_template("editItem.html", category_name=category_name, item_title=item_title)
 
 
+#Page for deleting an item in a category
 @app.route('/catalog/<category_name>/<item_title>/delete', methods=['GET','POST'])
 def deleteItem(category_name, item_title):
+	if 'username' not in session:
+		return redirect('/login')
 	if request.method == 'POST':
+		#In case there are two identical items, use first() to at least delete one.
+		#Avoid error when using one()
 		deletedItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).first()
 		dbsession.delete(deletedItem)
 		dbsession.commit()
@@ -268,4 +289,7 @@ def deleteItem(category_name, item_title):
 if __name__ == '__main__':
 	app.debug = True
 	app.secret_key = 'super_secret_key'
+	#Open "http://localhost:8000" in browser to avoid origin error in OAuth
+	#Google API console should use "http://localhost:8000"
+	#The console doesn't support 0.0.0.0
 	app.run(host='0.0.0.0', port=8000)
