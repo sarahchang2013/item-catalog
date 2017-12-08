@@ -1,4 +1,15 @@
 
+body {
+	background-color: #d2d4d8;
+}
+
+.pane {
+	width: 80%;
+	height: 90%;
+	margin: auto;
+	background-color: #ffffff;
+}
+
 a {
 	text-decoration: none;
 }
@@ -16,16 +27,15 @@ a.site-name, a.login-logout:hover, a.site-name, a.login-logout:active {
 }
 
 #sitename {
-	text-align: left;
-	/*Use inline-block to align text in one line.*/
-	display: inline-block;
+
+	float: left;
 }
 
-.login-logout {
-	margin-right: 0;
+.account {
+	margin: 2em 0 auto auto;
+	font-size: 1em;
 	text-align: right;
-	/*Inline-block is preferred to inline.*/
-	display: inline-block;
+	float: right;
 }
 
 .category-title, .items-title {
@@ -39,4 +49,8 @@ a.category:link, a.category:visited, a.category:hover, a.category:active {
 
 a.item:link, a.item:visited, a.item:hover, a.item:active {
 	color: #f45642;
+}
+
+#add-item {
+	margin: 1.5em auto 1em auto;
 }

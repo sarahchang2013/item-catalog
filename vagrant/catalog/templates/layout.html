@@ -8,18 +8,21 @@
   </head>
 
   <body class="container">
-    <header class="row" id="navbar">
-        <h1 id="sitename"><a class="site-name" href="{{url_for('homePage')}}">Catalog App</a></h1>
-        <div class="account">
+    <div class="pane">
+      <header class="row" id="navbar">
+        <div class="col-12">
+          <h1 id="sitename"><a class="site-name" href="{{url_for('homePage')}}">Catalog App</a></h1>
+          <span class="account">
           {% if not session.logged_in %}
           <a class="login-logout" href="{{ url_for('login') }}">log in</a>
           {% else %}
           <a class="login-logout" href="{{ url_for('logout') }}">log out</a>
           {% endif %}
+          </span>
         </div>
-    </header>
+      </header>
       
-    <div class="flash">
+      <div class="flash">
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           <ul>
@@ -29,7 +32,7 @@
           </ul>
         {% endif %}
       {% endwith %}
-    </div>
-   
+      </div>
     {% block body %}{% endblock %}
+    </div>
   </body>
