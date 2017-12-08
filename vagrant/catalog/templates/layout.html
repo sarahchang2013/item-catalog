@@ -3,32 +3,33 @@
     <title>Catalog App</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-grid.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
   </head>
 
-  <body>
-    <header>
-      <div class="navbar">
-        <h1 id="site-name"><a href="{{url_for('homePage')}}">Catalog App</a></h1>
-        <div class="login-logout">
+  <body class="container">
+    <header class="row" id="navbar">
+        <h1 id="sitename"><a class="site-name" href="{{url_for('homePage')}}">Catalog App</a></h1>
+        <div class="account">
           {% if not session.logged_in %}
-          <a href="{{ url_for('login') }}">log in</a>
+          <a class="login-logout" href="{{ url_for('login') }}">log in</a>
           {% else %}
-          <a href="{{ url_for('logout') }}">log out</a>
+          <a class="login-logout" href="{{ url_for('logout') }}">log out</a>
           {% endif %}
         </div>
-      </div>
-      <div class="flash">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul>
-            {% for message in messages %}
-            <li> <strong> {{ message }} </strong> </li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
     </header>
+      
+    <div class="flash">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul>
+          {% for message in messages %}
+          <li> <strong> {{ message }} </strong> </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    </div>
+   
     {% block body %}{% endblock %}
   </body>
-</div>

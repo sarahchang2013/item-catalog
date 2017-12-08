@@ -1,27 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
-	<div class = "categories">
-		<h1>Categories</h1><br>
+<div class="row">
+	<div class="col-6 categories">
+		<h1 class="category-title">Categories</h1><br>
 
 		{% for category in categories %}
 
-			<a href = "{{url_for('categoryDetails', name = category.name)}}">{{category.name}}</a><br>
+			<a class="category" href="{{url_for('categoryDetails', name = category.name)}}">{{category.name}}</a><br>
 
 		{% endfor %}
 		<br><br>
 	</div>
 
-	<div class = "latestItems">
+	<div class="col-6 latestItems">
 		{% if session.logged_in %}
 		<a href="{{url_for('addItem')}}">Add Item</a>
 		{% endif %}
-		<h1>Latest Items</h1><br>
+		<h1 class="items-title">Latest Items</h1><br>
 		
 		{% for item in latestItems %}
 
-			<a href = "{{url_for('itemDescription', category_name = item.category.name, item_title = item.title)}}">{{item.title}}({{item.category.name}})</a><br>
+			<a class="item" href = "{{url_for('itemDescription', category_name = item.category.name, item_title = item.title)}}">{{item.title}}({{item.category.name}})</a><br>
 
 		{% endfor %}
 	</div>
-	
+</div>
 {% endblock %}

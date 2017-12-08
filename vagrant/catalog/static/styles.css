@@ -3,25 +3,40 @@ a {
 	text-decoration: none;
 }
 
-a:link, a:visited {
+a.site-name, a.login-logout:link, a.site-name, a.login-logout:visited {
 	color: #e1e3e8;
 }
 
-a:hover, a:active {
+a.site-name, a.login-logout:hover, a.site-name, a.login-logout:active {
 	color: #ffffff;
 }
 
-.navbar {
+#navbar {
 	background-color: #586e91;
 }
 
-.login-logout {
-	float: right;
-	margin-top: 1em;
+#sitename {
+	text-align: left;
+	/*Use inline-block to align text in one line.*/
+	display: inline-block;
 }
 
-#site-name {
-	color: #ffffff;
-	text-align: left;
-	display: inline;
+.login-logout {
+	margin-right: 0;
+	text-align: right;
+	/*Inline-block is preferred to inline.*/
+	display: inline-block;
+}
+
+.category-title, .items-title {
+	color: #586e91;
+}
+
+/* There is no short hand format for this*/
+a.category:link, a.category:visited, a.category:hover, a.category:active {
+	color: #f47142;
+}
+
+a.item:link, a.item:visited, a.item:hover, a.item:active {
+	color: #f45642;
 }
