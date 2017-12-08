@@ -1,0 +1,27 @@
+
+a {
+	text-decoration: none;
+}
+
+a:link, a:visited {
+	color: #e1e3e8;
+}
+
+a:hover, a:active {
+	color: #ffffff;
+}
+
+.navbar {
+	background-color: #586e91;
+}
+
+.login-logout {
+	float: right;
+	margin-top: 1em;
+}
+
+#site-name {
+	color: #ffffff;
+	text-align: left;
+	display: inline;
+}
