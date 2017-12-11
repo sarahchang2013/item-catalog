@@ -47,7 +47,7 @@ class Item(Base):
 	description = Column(String(800), nullable=False)
 	category_id = Column(Integer, ForeignKey('category.id'))
 	category = relationship("Category", back_populates="items")
-	user_id = Column(Integer, nullable=False, ForeignKey('user.id'))	
+	user_id = Column(Integer, ForeignKey('user.id'))	
 
 	#serialize function
 	@property

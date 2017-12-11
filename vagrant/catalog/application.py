@@ -249,7 +249,7 @@ def editItem(category_name, item_title):
 	if 'username' not in session:
 		return redirect('/login')
 	#Check if current user's id is the same as item.user_id
-	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.name == category_name)).one()
+	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 	if currentItem.user_id != session['user_id']:
 		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':		
@@ -280,7 +280,7 @@ def editItem(category_name, item_title):
 def deleteItem(category_name, item_title):
 	if 'username' not in session:
 		return redirect('/login')
-	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.name == category_name)).one()
+	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 	if currentItem.user_id != session['user_id']:
 		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
