@@ -246,11 +246,11 @@ def addItem():
 def editItem(category_name, item_title):
 	if 'username' not in session:
 		return redirect('/login')
-	if request.method == 'POST':
-		#Check if current user's id is the same as item.user_id
-		currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.name == category_name)).one()
-		if currentItem.user_id != session['user_id']:
-			return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
+	#Check if current user's id is the same as item.user_id
+	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.name == category_name)).one()
+	if currentItem.user_id != session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
+	if request.method == 'POST':		
 		#Retrieve form data
 		title = request.form['title']
 		description = request.form['description']
@@ -278,6 +278,9 @@ def editItem(category_name, item_title):
 def deleteItem(category_name, item_title):
 	if 'username' not in session:
 		return redirect('/login')
+	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.name == category_name)).one()
+	if currentItem.user_id != session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		#In case there are two identical items, use first() to at least delete one.
 		#Avoid error when using one()
