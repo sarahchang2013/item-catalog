@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="row">
-	<div class="col-6 categories">
+	<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 categories">
 		<h1 class="category-title">Categories</h1><br>
 
 		{% for category in categories %}
@@ -11,7 +11,7 @@
 		{% endfor %}
 	</div>
 		
-	<div class="col-6 category-items">
+	<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 category-items">
 		<h1 class="items-title">{{category_name}} Items ({{count}} items)</h1>
 		{% for item in items %}
 			<a class="item" href="{{url_for('itemDescription', category_name = category_name, item_title = item.title)}}">{{item.title}}</a><br>
