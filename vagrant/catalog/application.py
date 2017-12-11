@@ -139,6 +139,8 @@ def getUserInfo(user_id):
 
 def getUserID(email):
     try:
+    	#If FB connect is added, and a user has a FB and G account with the same email 
+    	#Another field, "account_type" is needed to differentiate 
         user = dbsession.query(User).filter_by(email=email).one()
         return user.id
     except:

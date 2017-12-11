@@ -9,6 +9,11 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+#add a dummy user
+user1 = User(name="dummyUser", email="dummyuseremail")
+session.add(user1)
+session.commit()
+
 #add new categories 
 cat1 = Category(name = "Soccer")
 session.add(cat1)
@@ -44,19 +49,19 @@ session.commit()
 
 
 #add new items in each category
-item1 = Item(category_id = 1, title = "Soccer Cleats", description = "The Shoes")
+item1 = Item(user_id = 1, category_id = 1, title = "Soccer Cleats", description = "The Shoes")
 session.add(item1)
 session.commit()
 
-item2 = Item(category_id = 1, title = "Jersey", description = "The Shirt")
+item2 = Item(user_id = 1, category_id = 1, title = "Jersey", description = "The Shirt")
 session.add(item2)
 session.commit()
 
-item3 = Item(category_id = 3, title = "Bat", description = "The bat")
+item3 = Item(user_id = 1, category_id = 3, title = "Bat", description = "The bat")
 session.add(item3)
 session.commit()
 
-item4 = Item(category_id = 5, title = "Snowboard", description = "The Snowboard")
+item4 = Item(user_id = 1, category_id = 5, title = "Snowboard", description = "The Snowboard")
 session.add(item4)
 session.commit()
 
