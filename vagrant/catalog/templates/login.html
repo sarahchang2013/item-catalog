@@ -45,6 +45,7 @@
       function signInCallback(authResult) {
         if (authResult['code']) {
           $('#signinButton').attr('style', 'display: none');
+          $('#result').html('Connecting to Google account...');
           $.ajax ({
             type: 'POST',
             url: '/gconnect?state={{STATE}}',

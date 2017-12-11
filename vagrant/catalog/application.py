@@ -119,9 +119,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 150px; height: 150px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % session['username'])
-    print "done!"
     return output
 
 # User Helper Functions
@@ -251,7 +250,7 @@ def editItem(category_name, item_title):
 	#Check if current user's id is the same as item.user_id
 	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 	if currentItem.user_id != session['user_id']:
-		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
+		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please add your own item in order to edit.'); window.location='/index';}</script><body onload='myFunction()'>"
 	if request.method == 'POST':		
 		#Retrieve form data
 		title = request.form['title']
@@ -282,7 +281,7 @@ def deleteItem(category_name, item_title):
 		return redirect('/login')
 	currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
 	if currentItem.user_id != session['user_id']:
-		return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own item in order to edit.');}</script><body onload='myFunction()'>"
+		return "<script>function myFunction() {alert('You are not authorized to delete this item. Please add your own item in order to delete.'); window.location='/index';}</script><body onload='myFunction()'>"
 	if request.method == 'POST':
 		#In case there are two identical items, use first() to at least delete one.
 		#Avoid error when using one()
