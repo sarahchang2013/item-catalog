@@ -233,7 +233,8 @@ def addItem():
 		else:
 			#New item confirmed, add to database
 			newItem = Item(title=title, 
-							description=description, 
+							description=description,
+							user_id=session['user_id'],
 							category_id=category_id)
 			dbsession.add(newItem)
 			dbsession.commit()
