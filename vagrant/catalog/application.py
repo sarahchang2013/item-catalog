@@ -32,7 +32,7 @@ def login():
     return render_template('login.html', STATE=state)
 
 
-# Connect to Google account
+# Connect to Google account, mostly from github repo: udacity/ud330
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -154,7 +154,7 @@ def getUserID(email):
         return None
 
 
-# Disconnect from Google account.
+# Disconnect from Google account, mostly from github repo: udacity/ud330
 # If new third party is added, seperate '/logout' to a new function,
 # and render a new page for logout options.
 @app.route('/logout')
