@@ -3,13 +3,15 @@
     <title>Catalog App</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+
     <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
 	</script>
     <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
-
-
   </head>
 
   <body>
@@ -20,7 +22,8 @@
         auth2 = gapi.auth2.init({
           client_id: '251997723405-46at4eis5ac8v5k9nfva03ad22i1rujj.apps.googleusercontent.com',
           // Scopes to request in addition to 'profile' and 'email'
-          scope: 'openid email'
+          scope: 'openid email',
+          cookiepolicy: 'single_host_origin'
           //redirect-uri="postmessage" is deprecated
           //approvalprompt="force" is no longer used
         });
@@ -30,7 +33,14 @@
   	<!--END start() for script in head tag-->
 
   	<!-- GOOGLE PLUS SIGN IN-->
-  	<button id="signinButton">Sign in with Google</button>
+  	<div id="googleSignin">
+   		<span class="label">Sign in with:</span>
+    	<div id="signinButton" class="customGPlusSignIn">
+      		<span class="icon"></span>
+      		<span class="buttonText">Google</span>
+    	</div>
+  	</div>
+
   	<script>
   		$('#signinButton').click(function() {
     		// signInCallback defined in step 6.
@@ -44,7 +54,7 @@
     <script>
       function signInCallback(authResult) {
         if (authResult['code']) {
-          $('#signinButton').attr('style', 'display: none');
+          $('#googleSignin').attr('style', 'display: none');
           $('#result').html('Connecting to Google account...');
           $.ajax ({
             type: 'POST',
