@@ -122,9 +122,9 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += session['picture']
-    output += '" style = "width: 150px; height: 150px; '
-    output += 'border-radius: 150px; -webkit-border-radius:'
-    output += ' 150px; -moz-border-radius: 150px;"> '
+    output += ' " style = "width: 150px; height: 150px;"'
+    output += 'border-radius: 150px;-webkit-border-radius:'
+    output += ' 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % session['username'])
     return output
 
@@ -218,12 +218,13 @@ def categoryDetails(name):
 # Show description of an item in a category
 @app.route('/catalog/<category_name>/<item_title>')
 def itemDescription(category_name, item_title):
-    item = dbsession.query(Item).filter(and_(
-                     Item.title == item_title,
-                     Item.category.has(Category.name == category_name))).one()
+    item = dbsession.query(Item).
+                    filter(and_(
+                                Item.title==item_title, 
+                                Item.category.has(Category.name==category_name))                          ).one()
     return render_template(
-                           "itemDescription.html",
-                           category_name=category_name,
+                           "itemDescription.html", 
+                           category_name=category_name, 
                            item=item)
 
 
@@ -245,19 +246,13 @@ def addItem():
         description = request.form['description']
         category_id = request.form['category']
         # Check if an item with the same title and category already exists
-        existing_items = dbsession.query(Item).filter(and_(
-                                  Item.title == title,
-                                  Item.category_id == category_id)).all()
+        existing_items = dbsession.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
         if len(existing_items):
             flash('Item already exists!')
             return redirect('/index')
         else:
             # New item confirmed, add to database
-            newItem = Item(
-                           title=title,
-                           description=description,
-                           user_id=session['user_id'],
-                           category_id=category_id)
+            newItem = Item(title=title, description=description,user_id=session['user_id'],category_id=category_id)
             dbsession.add(newItem)
             dbsession.commit()
             return redirect('/index')
@@ -266,89 +261,55 @@ def addItem():
 
 
 # Page for editting an item in a category
-@app.route(
-           '/catalog/<category_name>/<item_title>/edit',
-           methods=['GET', 'POST'])
+@app.route('/catalog/<category_name>/<item_title>/edit', methods=['GET','POST'])
 def editItem(category_name, item_title):
     if 'username' not in session:
         return redirect('/login')
     # Check if current user's id is the same as item.user_id
-    currentItem = dbsession.query(Item).filter(and_(
-                    Item.title == item_title,
-                    Item.category.has(Category.name == category_name))).one()
+    currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
     if currentItem.user_id != session['user_id']:
-        output = '<script>function myFunction()'
-        output += '{alert("You are not authorized to edit this item.'
-        output += 'Please add your own item in order to edit.");'
-        output += ' window.location="/index";}</script>'
-        output += '<body onload="myFunction()">'
-        return output
-    if request.method == 'POST':
+        return "<script>function myFunction() {alert('You are not authorized to edit this item. Please add your own item in order to edit.'); window.location='/index';}</script><body onload='myFunction()'>"
+    if request.method == 'POST':		
         # Retrieve form data
         title = request.form['title']
         description = request.form['description']
         category_id = request.form['category']
         # Check if an item with the same title and category already exists
-        existing_items = dbsession.query(Item).filter(and_(
-                             Item.title == title,
-                             Item.category_id == category_id)).all()
+        existing_items = dbsession.query(Item).filter(and_(Item.title == title, Item.category_id == category_id)).all()
         if len(existing_items) >= 1:
-            flash('Item exists, please pick a different title or category.')
-            return render_template(
-                                   "editItem.html",
-                                   category_name=category_name,
-                                   item_title=item_title)
+            flash('Item already exists, please pick a different title or category.')
+            return render_template("editItem.html", category_name=category_name, item_title=item_title)
         else:
             # No existing item with same title and category, update it
-            editedItem = dbsession.query(Item).filter(and_(
-                    Item.title == item_title,
-                    Item.category.has(Category.name == category_name))).one()
+            editedItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
             editedItem.title = title
             editedItem.description = description
             editedItem.category_id = category_id
             new_cat_name = editedItem.category.name
             dbsession.commit()
-            return redirect('/catalog/{}/{}'.format(new_cat_name,
-                                                    editedItem.title))
+            return redirect('/catalog/{}/{}'.format(new_cat_name, editedItem.title))
     else:
-        return render_template(
-                               "editItem.html",
-                               category_name=category_name,
-                               item_title=item_title)
+        return render_template("editItem.html", category_name=category_name, item_title=item_title)
 
 
 # Page for deleting an item in a category
-@app.route('/catalog/<category_name>/<item_title>/delete',
-           methods=['GET', 'POST'])
+@app.route('/catalog/<category_name>/<item_title>/delete', methods=['GET','POST'])
 def deleteItem(category_name, item_title):
     if 'username' not in session:
         return redirect('/login')
-    currentItem = dbsession.query(Item).filter(and_(
-            Item.title == item_title,
-            Item.category.has(Category.name == category_name))).one()
+    currentItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).one()
     if currentItem.user_id != session['user_id']:
-        output = '<script>function myFunction()'
-        output += '{alert("You are not authorized to delete this item.'
-        output += 'Please add your own item in order to delete.");'
-        output += ' window.location="/index";}</script>'
-        output += '<body onload="myFunction()">'
-        return output
+        return "<script>function myFunction() {alert('You are not authorized to delete this item. Please add your own item in order to delete.'); window.location='/index';}</script><body onload='myFunction()'>"
     if request.method == 'POST':
-        # In case there are two identical items,
-        # use first() to at least delete one.
-        # Avoid errors when using one()
-        deletedItem = dbsession.query(Item).filter(and_(
-            Item.title == item_title,
-            Item.category.has(Category.name == category_name))).first()
+        # In case there are two identical items, use first() to at least delete one.
+        # Avoid error when using one()
+        deletedItem = dbsession.query(Item).filter(and_(Item.title == item_title, Item.category.has(Category.name == category_name))).first()
         dbsession.delete(deletedItem)
         dbsession.commit()
         flash('Item deleted!')
         return redirect('/index')
     else:
-        return render_template(
-                               "deleteItem.html",
-                               category_name=category_name,
-                               item_title=item_title)
+        return render_template("deleteItem.html", category_name=category_name, item_title=item_title)
 
 
 if __name__ == '__main__':
