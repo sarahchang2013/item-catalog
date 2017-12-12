@@ -1,6 +1,6 @@
 
 body {
-	background-color: #d2d4d8;
+	background-color: #eaedf2;
 }
 
 .pane {
@@ -23,7 +23,7 @@ a.site-name, a.login-logout:hover, a.site-name, a.login-logout:active {
 }
 
 #navbar {
-	background-color: #586e91;
+	background-color: #170b4c;
 	width: 100%;
 	margin: auto;
 }
@@ -35,13 +35,26 @@ a.site-name, a.login-logout:hover, a.site-name, a.login-logout:active {
 
 .account {
 	margin: 2em 0 auto auto;
-	font-size: 1em;
-	text-align: right;
 	float: right;
+	background-color: #e5703d;
+	border-radius: 5px;
+	width: 6em;
+	height: 40%;
+	font-size: 1.3em;
+	text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+.categories {
+	border-right: 1px solid #edeeef;
 }
 
 .category-title, .items-title {
 	color: #586e91;
+}
+
+span.category-name {
+	color: #838387;
 }
 
 /* There is no short hand format for this*/
