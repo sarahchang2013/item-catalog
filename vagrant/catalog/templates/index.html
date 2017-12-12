@@ -2,7 +2,7 @@
 {% block body %}
 <div class="row">
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 categories">
-		<h1 class="category-title">Categories</h1><br>
+		<h2 class="category-title">Categories</h2><br>
 
 		{% for category in categories %}
 
@@ -16,7 +16,7 @@
 		{% if session.logged_in %}
 		<a id="add-item" href="{{url_for('addItem')}}">Add Item</a>
 		{% endif %}
-		<h1 class="items-title">Latest Items</h1><br>
+		<h2 class="items-title">Latest Items</h2><br>
 		
 		{% for item in latestItems %}
 
