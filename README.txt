@@ -1,5 +1,6 @@
 Description:
    A web application that lists items within various categories, using a Google OAuth2.0 login system. Registered users can add, edit and delete their own items, they can't delete other users' items.
+   The app also has a JSON endpoint to export all categories with their items in the JSON format.
 
 How to run it:
    1.Install virtualbox and vagrant first.
@@ -12,3 +13,4 @@ How to run it:
    8.Click each item to see its description.
    9.Edit and delete your own items in each item's description page.
    10.In case you want to initialize the database again, delete catalog.db, and run "database_setup.py", then run "add_items.py" in their own folder.
+   11. Visit "http://localhost:8000/catalog.json" to access the JSON endpoint.
